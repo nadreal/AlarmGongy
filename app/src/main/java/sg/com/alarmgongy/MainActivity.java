@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,7 +18,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
-    private TextView mTextView;
+    private TextView mTextView, tvStbTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,15 +26,23 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         setContentView(R.layout.activity_main);
 
         mTextView = findViewById(R.id.textView);
+        tvStbTime = findViewById(R.id.tv_stb_time);
 
+        Calendar c = Calendar.getInstance();
+        String hours = String.valueOf(c.get(Calendar.HOUR));
+        String minutes = String.valueOf(c.get(Calendar.MINUTE));
+        mTextView.setText(hours + " : " + minutes);
+        Log.d("GRUBI" , "on Create!");
         Button buttonTimePicker = findViewById(R.id.button_timepicker);
         buttonTimePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DialogFragment timePicker = new TimePickerFragment();
                 timePicker.show(getSupportFragmentManager(), "time picker");
+                Log.d("GRUBI" , "open time picker!");
             }
         });
+
 
         Button buttonCancelAlarm = findViewById(R.id.button_cancel);
         buttonCancelAlarm.setOnClickListener(new View.OnClickListener() {
@@ -46,9 +55,11 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+        Log.d("GRUBI" , "inside on TIMESET");
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.HOUR_OF_DAY, 5);
+        c.set(Calendar.MINUTE, 31);
         c.set(Calendar.SECOND, 0);
 
         updateTimeText(c);
