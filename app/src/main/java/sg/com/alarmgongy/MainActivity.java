@@ -5,6 +5,10 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.CountDownTimer;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +21,7 @@ import android.widget.TimePicker;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
+public class MainActivity extends AppCompatActivity  {
     private TextView mTextView, tvStbTime;
 
     @Override
@@ -28,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         mTextView = findViewById(R.id.textView);
         tvStbTime = findViewById(R.id.tv_stb_time);
 
-        Calendar c = Calendar.getInstance();
+        /*
         String hours = String.valueOf(c.get(Calendar.HOUR));
         String minutes = String.valueOf(c.get(Calendar.MINUTE));
         mTextView.setText(hours + " : " + minutes);
@@ -51,24 +55,47 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
                 cancelAlarm();
             }
         });
+        */
+        setAlarm();
     }
 
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+    public void setAlarm() {
 
         Log.d("GRUBI" , "inside on TIMESET");
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 5);
-        c.set(Calendar.MINUTE, 31);
+        c.set(Calendar.HOUR_OF_DAY, 21);
+        c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);
 
         updateTimeText(c);
+        startTimer(c);
         startAlarm(c);
     }
 
+    public void startTimer(Calendar c) {
+        long test = Calendar.getInstance().getTimeInMillis() - c.getTimeInMillis();
+
+
+        new CountDownTimer(test, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                tvStbTime.setText("seconds remaining: " + millisUntilFinished / 1000);
+                //here you can have your logic to set text to edittext
+            }
+
+            public void onFinish() {
+                tvStbTime.setText("done!");
+                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                r.play();
+            }
+
+        }.start();
+    }
     private void updateTimeText(Calendar c) {
         String timeText = "Alarm set for: ";
         timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime());
+
 
         mTextView.setText(timeText);
     }
@@ -80,11 +107,14 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
 
         if (c.before(Calendar.getInstance())) {
             c.add(Calendar.DATE, 1);
+            Log.d("GRUBI", "Alarm is set before desired time");
         }
+
 
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
+    /*
     private void cancelAlarm() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
@@ -93,4 +123,5 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         alarmManager.cancel(pendingIntent);
         mTextView.setText("Alarm canceled");
     }
+    */
 }
