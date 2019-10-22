@@ -10,11 +10,11 @@ import android.net.Uri;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity  {
     private TextView  tvAlarmTime, tvCurrentTime;
@@ -32,21 +32,20 @@ public class MainActivity extends AppCompatActivity  {
 
     public void setAlarm() {
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, 21);
-        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.HOUR_OF_DAY, 17);
+        c.set(Calendar.MINUTE, 37);
         c.set(Calendar.SECOND, 0);
 
         updateTimeText(c);
         startAlarm(c);
-
-//      startTimer(c);
     }
 
     private void updateTimeText(Calendar c) {
         String timeText = "Alarm is set for: ";
         timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime());
         tvAlarmTime.setText(timeText);
-        tvCurrentTime.setText((CharSequence) c.getTime());
+        String currentTime = DateFormat.getDateTimeInstance().format(new Date());
+        tvCurrentTime.setText(currentTime);
     }
 
     private void startAlarm(Calendar c) {
@@ -57,11 +56,40 @@ public class MainActivity extends AppCompatActivity  {
         if (c.before(Calendar.getInstance())) {
             c.add(Calendar.DATE, 1);
         }
-
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
-    private void cancelAlarm() {
+    private void setCustomTImeAlarm() {
+        //setDefaultTimeAlarms();
+        //Select default alarm time
+    }
+
+    private void setRoundHourAlarms() {
+        setDefaultTimeAlarms(0, 0);
+    }
+
+    private void setHalfHourAlarms() {
+        setDefaultTimeAlarms(0, 30);
+    }
+
+    private void setDefaultTimeAlarms(int hours, int minutes) {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+
+        Calendar c = Calendar.getInstance();
+        for (int i = 0; i < 24; i++) {
+            c.set(Calendar.HOUR_OF_DAY, hours);
+            c.set(Calendar.MINUTE, minutes);
+
+            if (c.before(Calendar.getInstance())) {
+                c.add(Calendar.DATE, 1);
+            }
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+        }
+    }
+
+    private void cancelAlarms() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
@@ -85,6 +113,4 @@ public class MainActivity extends AppCompatActivity  {
             }
         }.start();
     }
-
-
 }

@@ -3,4 +3,5 @@
     <string name="no_alarm_set">No Alarm set</string>
     <string name="cancel_alarm">cancel alarm</string>
     <string name="current_time">Current time:</string>
+    <string name="enable_alert">enable_alert</string>
 </resources>
