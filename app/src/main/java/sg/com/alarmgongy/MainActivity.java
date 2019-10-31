@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity  {
 
     public void setAlarm() {
         Calendar c = Calendar.getInstance();
+
         c.set(Calendar.HOUR_OF_DAY, 17);
         c.set(Calendar.MINUTE, 37);
         c.set(Calendar.SECOND, 0);
@@ -44,8 +45,10 @@ public class MainActivity extends AppCompatActivity  {
         String timeText = "Alarm is set for: ";
         timeText += DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime());
         tvAlarmTime.setText(timeText);
+
         String currentTime = DateFormat.getDateTimeInstance().format(new Date());
         tvCurrentTime.setText(currentTime);
+
     }
 
     private void startAlarm(Calendar c) {
